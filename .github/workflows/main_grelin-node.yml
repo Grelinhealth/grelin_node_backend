@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_OPTIONS: "--max-old-space-size=8192"  # Prevents Node.js memory crashes
+  NODE_OPTIONS: "--max-old-space-size=8192"  # Prevents memory errors in install
 
 jobs:
   build:
@@ -16,33 +16,23 @@ jobs:
       contents: read
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🛠️ Set up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-          cache: 'npm'  # Speeds up installs with caching
 
-      - name: 🔄 Clean and install dependencies
+      - name: Clean install with high memory limit
         run: |
           rm -rf node_modules package-lock.json
-          npm install --legacy-peer-deps
+          npm install
 
-      - name: 🧪 Run tests (optional, keep or remove)
-        run: |
-          if [ -f ./package.json ] && grep -q "\"test\":" package.json; then
-            npm test
-          else
-            echo "No test script found. Skipping tests."
-          fi
+      - name: Zip app (include node_modules)
+        run: zip -r release.zip . -x "*.git*"
 
-      - name: 📦 Zip app for deployment
-        run: |
-          zip -r release.zip . -x "*.git*" "tmp/*" "tests/*" "coverage/*"
-
-      - name: ☁️ Upload deployment artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -56,15 +46,15 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: 📥 Download build artifact
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: 📂 Unzip artifact
-        run: unzip -o release.zip
+      - name: Unzip artifact
+        run: unzip release.zip
 
-      - name: 🚀 Deploy to Azure Web App
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
