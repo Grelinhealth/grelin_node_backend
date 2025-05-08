@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "jest"
+    "start": "node --max-old-space-size=8192 app.js"   
   },
   "author": "keerthi",
   "license": "ISC",
