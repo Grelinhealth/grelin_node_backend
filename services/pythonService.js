@@ -5,7 +5,7 @@ const aiMedicalfileRepository = require("../repository/aiMedicalFielsRepository.
 const processMedicalText = async (fileInfo, userId) => {
   try {
     let info = {
-      fileID: fileInfo.medical_file_id,
+      user_id: fileInfo.medical_file_id,
       text: fileInfo.original_text,
     };
     let result = await axios.post(
@@ -25,19 +25,19 @@ const processMedicalText = async (fileInfo, userId) => {
     console.log("result", result);
 
     // Extract arrays directly
-    const icdFormatted = result.data.icd_prediction?.formatted || [];
-    const cptFormatted = result.data.cpt_prediction?.formatted || [];
+    const icdFormatted = result.data.icd_prediction.labels  || [];
+    const cptFormatted = result.data.cpt_prediction.labels || [];
 
     // Extract only the codes (before ' - ')
     const predicted_icds = icdFormatted.map((code) =>
-      code.split(" - ")[0].trim()
+      code.label
     );
     const predicted_cpts = cptFormatted.map((code) =>
-      code.split(" - ")[0].trim()
+      code.label
     );
 
     // Combine formatted for summary
-    const summary_mr = [...icdFormatted, ...cptFormatted].join("\n");
+    const summary_mr = [result.data.formatted ].join("\n");
 
     const obj = {
       medical_file_id: fileInfo.medical_file_id,

@@ -7,84 +7,43 @@ const logger = require("../config/loggerApi.js");
 const { error } = require("winston");
 
 const createUser = async (userDetails) => {
-  if (userDetails.circle_id) {
-    const userInfo = {
-      first_name: userDetails.first_name,
-      last_name: userDetails.last_name,
-      mobile_number: userDetails.mobile_number,
-      email_id: userDetails.email_id,
-      designation: userDetails.designation,
-      role: userDetails.primaryRoles,
-      circle_id: userDetails.circle_id,
-    };
-    console.log(userInfo);
-    return await userCreationRepository
-      .createUser(userInfo)
-      .then(async (userLoginModel) => {
-        let roleId = userDetails.primaryRoles;
-        let role_id = await roleRepository.getrole(roleId);
-        if (role_id) {
-          const loginInfo = {
-            entity_name: "users",
-            entity_id: userLoginModel.id,
-            user_name: userDetails.user_name,
-            password: userDetails.password,
-            role_id: role_id,
-            is_primary: userDetails.is_primary,
-          };
-          return await userLoginRepository.createUser(loginInfo);
-        }
-      })
-      .then(async (userRoleMap) => {
-        const info = {
-          user_id: userRoleMap.id,
-          role_id: userRoleMap.role_id,
+  const userInfo = {
+    first_name: userDetails.first_name,
+    last_name: userDetails.last_name,
+    mobile_number: userDetails.mobile_number,
+    email_id: userDetails.email_id,
+    designation: userDetails.designation,
+    role: userDetails.primaryRoles,
+  };
+  return await userCreationRepository
+    .createUser(userInfo)
+    .then(async (userLoginModel) => {
+      let roleId = userDetails.primaryRoles;
+      let role_id = await roleRepository.getrole(roleId);
+      if (role_id) {
+        const loginInfo = {
+          entity_name: "users",
+          entity_id: userLoginModel.id,
+          user_name: userDetails.user_name,
+          password: userDetails.password,
+          role_id: role_id,
+          is_primary: userDetails.is_primary,
         };
-        return userRoleMapRepository.createUserRoleMap(info);
-      })
-      .catch((error) => {
-        console.log("Error in userCreationService - createUser:", error);
-        logger.error("Error in userCreationService - createUser:", error);
-      });
-  } else {
-    const userInfo = {
-      first_name: userDetails.first_name,
-      last_name: userDetails.last_name,
-      mobile_number: userDetails.mobile_number,
-      email_id: userDetails.email_id,
-      designation: userDetails.designation,
-      role: userDetails.primaryRoles,
-    };
-    return await userCreationRepository
-      .createUser(userInfo)
-      .then(async (userLoginModel) => {
-        let roleId = userDetails.primaryRoles;
-        let role_id = await roleRepository.getrole(roleId);
-        if (role_id) {
-          const loginInfo = {
-            entity_name: "users",
-            entity_id: userLoginModel.id,
-            user_name: userDetails.user_name,
-            password: userDetails.password,
-            role_id: role_id,
-            is_primary: userDetails.is_primary,
-          };
-          return await userLoginRepository.createUser(loginInfo);
-        }
-      })
-      .then(async (userRoleMap) => {
-        const info = {
-          user_id: userRoleMap.id,
-          role_id: userRoleMap.role_id,
-        };
-        let value = userRoleMapRepository.createUserRoleMap(info);
-        return value;
-      })
-      .catch((error) => {
-        console.log("ERROR", error);
-        logger.error("Error in userCreationService - createUser", error);
-      });
-  }
+        return await userLoginRepository.createUser(loginInfo);
+      }
+    })
+    .then(async (userRoleMap) => {
+      const info = {
+        user_id: userRoleMap.id,
+        role_id: userRoleMap.role_id,
+      };
+      let value = userRoleMapRepository.createUserRoleMap(info);
+      return  value;
+    })
+    .catch((error) => {
+      console.log("ERROR", error);
+      logger.error("Error in userCreationService - createUser", error);
+    });
 };
 // Fetch existing user by id
 const getUser = async (id) => {

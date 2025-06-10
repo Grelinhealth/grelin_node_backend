@@ -40,11 +40,13 @@ app.use(function (req, res, next) {
 // Import routes
 const userloginRoute = require("./v1/routes/userLoginRoutes");
 const medicalFileRoute = require("./v1/routes/medicalFileRoutes");
+const providerRoute = require("./v1/routes/providerRoutes");
 
 
 // Routes
 app.use("/api/v1/login", userloginRoute);
 app.use("/api/v1/medicalFile", medicalFileRoute);
+app.use("/api/v1/provider", providerRoute);
 
 //port
 const PORT = process.env.PORT;

@@ -54,9 +54,55 @@ db.entitlementRoleMapModel = require("./entitlementRoleMapModel.js")(
   sequelize,
   DataTypes
 );
-
 db.medicalFilleModel = require("./medicalFileModel.js")(sequelize, DataTypes);
 db.aiModifiedMedicalFileModel = require("./aiModifiedMedicalFileModel.js")(
+  sequelize,
+  DataTypes
+);
+
+db.serviceDetailsModel = require("./serviceDetailsModel.js")(
+  sequelize,
+  DataTypes
+);
+db.organizationDetailsModel = require("./organizationDetailsModel.js")(
+  sequelize,
+  DataTypes
+);
+db.orgAddressDetailsModel = require("./orgAddressDetailsModel.js")(
+  sequelize,
+  DataTypes
+);
+db.orgContactDetailsModel = require("./orgContactDetailsmodel.js")(
+  sequelize,
+  DataTypes
+);
+db.orgIntegrationDetailsModel = require("./orgIntegrationDetailsModel.js")(
+  sequelize,
+  DataTypes
+);
+db.orgServiceMappingModel = require("./orgServiceMappingModel.js")(
+  sequelize,
+  DataTypes
+);
+
+db.providersDetailsModel = require("./providersDetailsModel.js")(
+  sequelize,
+  DataTypes
+);
+db.payerContractDetailsModel = require("./payerContractDetailsModel.js")(
+  sequelize,
+  DataTypes
+);
+db.complianceCheckModel = require("./complianceCheckModel.js")(
+  sequelize,
+  DataTypes
+);
+
+db.orgSignaturesModal = require("./orgSignaturesModal.js")(
+  sequelize,
+  DataTypes
+);
+db.OrganizationDocumentModal = require("./organizationDocumentModal.js")(
   sequelize,
   DataTypes
 );
@@ -144,5 +190,95 @@ db.aiModifiedMedicalFileModel.belongsTo(db.userLoginModel, {
   constraints: true,
 });
 
+// ------ organization details table relationship------//
+db.organizationDetailsModel.hasMany(db.orgAddressDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.orgAddressDetailsModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
 
+db.organizationDetailsModel.hasMany(db.orgContactDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.orgContactDetailsModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+
+db.organizationDetailsModel.hasMany(db.orgIntegrationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.orgIntegrationDetailsModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+
+db.organizationDetailsModel.hasMany(db.orgServiceMappingModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.orgServiceMappingModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+
+db.serviceDetailsModel.hasMany(db.orgServiceMappingModel, {
+  foreignKey: "service_id",
+  constraints: true,
+});
+
+db.orgServiceMappingModel.belongsTo(db.serviceDetailsModel, {
+  foreignKey: "service_id",
+  constraints: true,
+});
+
+db.organizationDetailsModel.hasMany(db.providersDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.providersDetailsModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+
+db.organizationDetailsModel.hasMany(db.OrganizationDocumentModal, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.OrganizationDocumentModal.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+
+db.organizationDetailsModel.hasMany(db.orgSignaturesModal, {
+  foreignKey: "org_id",
+  constraints: true,
+}); 
+ db.orgSignaturesModal.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+
+db.organizationDetailsModel.hasMany(db.payerContractDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.payerContractDetailsModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.organizationDetailsModel.hasMany(db.complianceCheckModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+db.complianceCheckModel.belongsTo(db.organizationDetailsModel, {
+  foreignKey: "org_id",
+  constraints: true,
+});
+// ------ organization details table relationship------//
 module.exports = { db, sequelize };

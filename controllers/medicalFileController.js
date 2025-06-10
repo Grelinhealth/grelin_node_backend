@@ -8,17 +8,17 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: "10000000" },
   fileFilter: (req, file, cb) => {
-    const fileTypes = /pdf|PDF|text\/plain/;
+    const fileTypes = /pdf|PDF|text|docx|DOCX\/plain/;
     const mimType = fileTypes.test(file.mimetype);
     const extname = fileTypes.test(path.extname(file.originalname));
-    if (mimType && extname) {
+    // if (mimType && extname) {
       return cb(null, true);
-    }
-    cb("give proper files format to upload");
-    logger.error(
-      "Error -caseDocumentcontroller - upload:",
-      "give proper files format to upload"
-    );
+    // // }
+    // cb("give proper files format to upload");
+    // logger.error(
+    //   "Error -caseDocumentcontroller - upload:",
+    //   "give proper files format to upload"
+    // );
   },
 });
 
